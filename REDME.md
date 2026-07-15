@@ -22,109 +22,121 @@ curl -sO https://packages.wazuh.com/4.12/wazuh-install.sh
 
 ![Step 1](screenshots/01-system-update-and-upgrade.png)
 
-## Step 2: Download the Wazuh Installation Script
+## Step 2: Accessing the Wazuh Dashboard
+Successfully opened the Wazuh Dashboard through the web browser after completing the installation.
 
-Download the official Wazuh installation script from the Wazuh package repository using the curl command.
-
-```bash
-curl -sO https://packages.wazuh.com/4.12/wazuh-install.sh
-```
 
 ![Step 2](screenshots/02-download-wazuh-installer.png)
 
-## Step 3: Install Wazuh Platform
+## Step 3: Wazuh Dashboard Overview
 
-Run the installation script to deploy the Wazuh Manager, Indexer, and Dashboard in an all-in-one installation.
+Verified that the Wazuh Dashboard is running correctly and ready for endpoint enrollment.
 
-```bash
-sudo bash wazuh-install.sh -a
-```
 
 ![Step 3](screenshots/03-install-wazuh-platform.png)
 
-## Step 4: Access the Wazuh Dashboard
+## Step 4: Installing Wazuh Agent on Windows
 
-After the installation is completed successfully, open the Wazuh Dashboard in a web browser using the server IP address and log in with the generated administrator credentials.
+Installed the Wazuh Windows Agent and configured it to communicate with the Wazuh Manager.
 
 ![Step 4](screenshots/04-wazuh-dashboard-login.png)
 
-## Step 5: Verify the Dashboard
+## Step 5: Verifying Registered Agent
 
-The Wazuh Dashboard loads successfully. At this stage, no endpoint is connected, so the dashboard initially shows that no agents are registered.
+Verified that the Windows endpoint was successfully enrolled and appeared as an Active Agent in the Wazuh Dashboard.
 
 ![Step 5](screenshots/05-wazuh-dashboard-overview.png)
 
-## Step 6: Deploy a Windows Agent
+## Step 6: Agent Management Dashboard
 
-From the Wazuh Dashboard, open the Agent Deployment page and select Windows as the target operating system. The dashboard automatically generates the installation command.
+Confirmed that the connected endpoint is actively sending logs to the Wazuh Manager.
 
 ![Step 6](screenshots/06-deploy-windows-agent.png)
 
-## Step 7: Install the Windows Agent
+## Step 7: VirusTotal Integration Settings
 
-Run the generated PowerShell command as Administrator on the Windows host to install and register the Wazuh Agent.
+Configured the VirusTotal API integration inside the Wazuh Manager by editing the manager configuration file.
 
 ```powershell
-# Generated PowerShell installation command from the Wazuh Dashboard
+<integration>
+  <name>virustotal</name>
+  <api_key>YOUR_API_KEY</api_key>
+  <group>syscheck</group>
+  <alert_format>json</alert_format>
+</integration>
 ```
 
 ![Step 7](screenshots/07-windows-agent-installation.png)
 
-## Step 8: Verify the Agent Connection
+## Step 8: Restarting Wazuh Manager
 
-After installation, the Windows endpoint successfully connects to the Wazuh Manager and appears as an active agent.
-
-![Step 8](screenshots/08-agent-successfully-connected.png)
-
-## Step 9: Configure VirusTotal API Integration
-
-Edit the Wazuh configuration file and add the VirusTotal integration block containing the API key.
-
-Configuration File:
-
-```text
-/var/ossec/etc/ossec.conf
-```
-
-![Step 9](screenshots/09-virustotal-api-key-configuration.png)
-
-## Step 10: Restart the Wazuh Manager
-
-Restart the Wazuh Manager service to apply the new VirusTotal configuration.
+Restarted the Wazuh Manager service after updating the VirusTotal integration settings.
 
 ```bash
 sudo systemctl restart wazuh-manager
 ```
 
-![Step 10](screenshots/10-restart-wazuh-manager-service.png)
+![Step 8](screenshots/08-agent-successfully-connected.png)
 
-## Step 11: Verify the Wazuh Manager Status
+## Step 9: Verifying Wazuh Service Status
 
-Check that the Wazuh Manager service is running correctly after the restart.
+Checked whether the Wazuh Manager service was running successfully after applying the new configuration.
 
-```bash
+```text
 sudo systemctl status wazuh-manager
 ```
 
-![Step 11](screenshots/11.1-verify-wazuh-manager-status.png)
+![Step 9](screenshots/09-virustotal-api-key-configuration.png)
 
-## Step 12: Verify the VirusTotal Configuration
+## Step 10: signin to VirusTotal
 
-Confirm that the VirusTotal integration block has been successfully added to the Wazuh configuration file.
+go to www.virustotal.com and login
 
 ```bash
 sudo grep -i virustotal /var/ossec/etc/ossec.conf
 ```
 
-![Step 12](screenshots/12-verify-virustotal-configuration.png)
+```bash
+sudo tail -30 /var/ossec/etc/ossec.conf
+```
 
-## Step 13: Generate a Test Event
+![Step 10](screenshots/10-restart-wazuh-manager-service.png)
+
+## Step 11: collect Api Key form virustotal.com/gui/user/shahriarmunem/apikey
+
+copy the API Key
+
+
+![Step 11](screenshots/11.1-verify-wazuh-manager-status.png)
+
+## Step 12: collect Api Key form virustotal.com/gui/user/shahriarmunem/apikey
+
+copy the API Key
+
+
+![Step 12](screenshots/11.2-verify-wazuh-manager-status.png)
+
+## Step 13: connect the api
+connect the api by adding bellow text 
+
+```XML
+<integration>
+  <name>virustotal</name>
+  <api_key>YOUR_API_KEY</api_key>
+  <group>syscheck</group>
+  <alert_format>json</alert_format>
+</integration>
+```
+
+![Step 13](screenshots/12-verify-virustotal-configuration.png)
+
+## Step 14: Generate a Test Event
 
 Create a text file inside a monitored directory on the Windows endpoint. Wazuh detects the new file, calculates its hash, and sends it to VirusTotal for reputation analysis.
 
-![Step 13](screenshots/13-create-test-file-on-agent.png)
+![Step 14](screenshots/13-create-test-file-on-agent.png)
 
-## Step 14: Verify the VirusTotal Alert
+## Step 15: Verify the VirusTotal Alert
 
 Open the Discover page in the Wazuh Dashboard and search using the following query:
 
@@ -134,5 +146,5 @@ rule.groups:virustotal
 
 The dashboard displays the VirusTotal response. Since the test file is newly created, VirusTotal reports **"No records in VirusTotal database,"** confirming that the integration is working correctly.
 
-![Step 14](screenshots/14-virustotal-alert-verification.png)
+![Step 15](screenshots/14-virustotal-alert-verification.png)
 
