@@ -12,13 +12,12 @@ This project demonstrates the deployment of Wazuh SIEM on Ubuntu Server 22.04.5 
 - Verify threat intelligence alerts
 
 
-## Step 1: Update the Ubuntu Server
+## Step 1: Download Wazuh Installation Script
 
-Before installing Wazuh, update the package list and upgrade all installed packages to ensure the system is fully up to date.
+Downloaded the official Wazuh installation script from the Wazuh package repository to begin the deployment process.
 
 ```bash
-sudo apt update
-sudo apt upgrade -y
+curl -sO https://packages.wazuh.com/4.12/wazuh-install.sh
 ```
 
 ![Step 1](screenshots/01-system-update-and-upgrade.png)
